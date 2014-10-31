@@ -37,9 +37,28 @@
                     /* Build data array from parents values. */
                     var data = {};
                     $(settings.parents).each(function() {
-                        var id = $(this).attr(settings.attribute);
-                        var value = ($(this).is("select") ? $(":selected", this) : $(this)).val();
-                        data[id] = value;
+                        var id = settings.var_name ? settings.var_name : $(this).attr(settings.attribute);
+
+                        if($(this).attr('multiple') == 'multiple'){
+                            var opt_selector = $(this).find("option:selected");
+                            $(opt_selector).each(function(i){
+    
+                                var id_m = id + "[" + i + "]";
+                                var value = $(this).val();
+    
+                                /* Only set the data if there is any option selected. */
+                                if (settings.avoid_empty_request !== true || value) {
+                                    data[id_m] = value;
+                                }
+                            });
+                        }
+                        else{
+                            var value = ($(this).is("select") ? $(":selected", this) : $(this)).val();
+                            /* Only set the data if there is any option selected. */
+                            if (settings.avoid_empty_request !== true || value) {
+                                data[id] = value;
+                            }
+                        }
 
                         /* Optionally also depend on values from these inputs. */
                         if (settings.depends) {
